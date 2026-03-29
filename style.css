@@ -1,0 +1,87 @@
+:root {
+    --apple-gray: #86868b;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    overflow: hidden;
+}
+
+/* MAGNETIC SNAP CONTAINER */
+.scroll-container {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+.snap-section {
+    height: 100vh;
+    width: 100vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* SECTION BACKGROUNDS */
+/* 60s: Deep Green CRT Glow */
+.bg-60s {
+    background: radial-gradient(circle at center, #0a220a 0%, #000 100%);
+}
+
+/* 90s: The classic Teal Desktop + Grid */
+.bg-90s {
+    background-color: #008080;
+    background-image: 
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* 2000s: Soft Blue-Grey Mesh (The Facebook/Web2 Era) */
+.bg-2000s {
+    background: linear-gradient(135deg, #e9ebee 0%, #b0c4de 100%);
+    color: #1c1e21; /* Dark text for light background */
+}
+
+/* 2010s: Sleek OLED Black */
+.bg-2010s {
+    background: #000;
+}
+
+/* Web3: Neon Deep Space */
+.bg-web3 {
+    background: radial-gradient(at 0% 0%, #1a0b2e 0, transparent 50%), 
+                radial-gradient(at 100% 100%, #0b1a2e 0, transparent 50%);
+}
+
+/* TYPOGRAPHY */
+.headline {
+    font-size: clamp(3rem, 10vw, 6rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+}
+
+.subhead {
+    font-size: clamp(1rem, 2.5vw, 1.75rem);
+    color: var(--apple-gray);
+    max-width: 700px;
+    margin-top: 1.5rem;
+}
+
+/* Interactions */
+.apple-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    padding: 3rem;
+}
