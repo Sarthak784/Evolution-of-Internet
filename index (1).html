@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Evolution of the Internet</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ==================== CUSTOM CURSOR ==================== -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ==================== LOADER ==================== -->
+  <div class="loader" id="loader">
+    <div class="loader-content">
+      <svg class="loader-svg" viewBox="0 0 120 120">
+        <circle class="loader-circle-bg" cx="60" cy="60" r="54" />
+        <circle class="loader-circle" cx="60" cy="60" r="54" />
+      </svg>
+      <div class="loader-text">
+        <span class="loader-percent" id="loaderPercent">0</span>%
+      </div>
+      <p class="loader-label">Connecting to the timeline...</p>
+    </div>
+  </div>
+
+  <!-- ==================== NAVIGATION ==================== -->
+  <nav class="nav" id="nav">
+    <div class="nav-logo">NET<span>ODYSSEY</span></div>
+    <div class="nav-timeline" id="navTimeline">
+      <a href="#hero" class="nav-dot active" data-year="Start" data-section="0"></a>
+      <a href="#arpanet" class="nav-dot" data-year="1960s" data-section="1"></a>
+      <a href="#www" class="nav-dot" data-year="1990s" data-section="2"></a>
+      <a href="#social" class="nav-dot" data-year="2000s" data-section="3"></a>
+      <a href="#mobile" class="nav-dot" data-year="2010s" data-section="4"></a>
+      <a href="#web3" class="nav-dot" data-year="Future" data-section="5"></a>
+      <a href="#conclusion" class="nav-dot" data-year="End" data-section="6"></a>
+      <div class="nav-progress" id="navProgress"></div>
+    </div>
+    <button class="nav-sound" id="soundToggle" aria-label="Toggle ambient mode">
+      <span class="sound-bar"></span>
+      <span class="sound-bar"></span>
+      <span class="sound-bar"></span>
+      <span class="sound-bar"></span>
+    </button>
+  </nav>
+
+  <!-- ==================== SCROLL PROGRESS ==================== -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- ==================== SECTION 1: HERO ==================== -->
+  <section class="section hero" id="hero">
+    <div class="hero-bg-grid" id="heroGrid"></div>
+    <div class="particles" id="heroParticles"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">A Journey Through Digital Time</p>
+      <h1 class="hero-title">
+        <span class="hero-line">The</span>
+        <span class="hero-line">Evolution</span>
+        <span class="hero-line accent">of the Internet</span>
+      </h1>
+      <p class="hero-sub">From cold-war cables to a decentralized future &mdash; scroll to travel through 60 years of the most transformative invention in human history.</p>
+      <div class="hero-scroll-cue">
+        <div class="scroll-mouse">
+          <div class="scroll-wheel"></div>
+        </div>
+        <span>Scroll to begin</span>
+      </div>
+    </div>
+    <div class="hero-year-big" aria-hidden="true">1960–2030</div>
+  </section>
+
+  <!-- ==================== SECTION 2: ARPANET (1960s-80s) ==================== -->
+  <section class="section era" id="arpanet" data-era="arpanet" data-color="#0a1628">
+    <div class="era-bg-element arpanet-nodes" id="arpanetNodes"></div>
+    <div class="era-sticky">
+      <div class="era-year-watermark" aria-hidden="true">1969</div>
+      <div class="era-header">
+        <span class="era-chapter">Chapter 01</span>
+        <h2 class="era-title split-text">The Genesis: ARPANET</h2>
+        <div class="era-date-range">1960s &mdash; 1980s</div>
+      </div>
+      <div class="era-narrative">
+        <div class="narrative-block" data-speed="0.8">
+          <div class="narrative-icon">
+            <svg viewBox="0 0 80 80"><circle cx="20" cy="20" r="6" fill="#00ff88"/><circle cx="60" cy="20" r="6" fill="#00ff88"/><circle cx="40" cy="60" r="6" fill="#00ff88"/><line x1="20" y1="20" x2="60" y2="20" stroke="#00ff88" stroke-width="1.5"/><line x1="60" y1="20" x2="40" y2="60" stroke="#00ff88" stroke-width="1.5"/><line x1="40" y1="60" x2="20" y2="20" stroke="#00ff88" stroke-width="1.5"/></svg>
+          </div>
+          <p>It started in the midst of the Cold War. The year was <strong>1969</strong> &mdash; the same year humans walked on the Moon. Deep inside UCLA, a team of scientists sent the first message across a network called <strong>ARPANET</strong>. The message was supposed to be "LOGIN." The system crashed after just two letters: <em>"LO."</em></p>
+        </div>
+        <div class="narrative-block" data-speed="1.0">
+          <p>And yet, those two letters changed everything. Funded by the U.S. Department of Defense, ARPANET was designed to survive a nuclear attack &mdash; a network with no single point of failure. By 1971, it connected 15 nodes. By 1973, it had crossed the Atlantic.</p>
+        </div>
+        <div class="narrative-block" data-speed="1.2">
+          <p>In <strong>1983</strong>, the network adopted <strong>TCP/IP</strong> &mdash; the universal language that still powers the internet today. Then in <strong>1989</strong>, a physicist named <strong>Tim Berners-Lee</strong> at CERN wrote a proposal: <em>"Information Management: A Proposal."</em> His boss scribbled on it: <strong>"Vague, but exciting."</strong></p>
+        </div>
+      </div>
+
+      <!-- Interactive: Terminal Simulator -->
+      <div class="interactive-card terminal-card" id="terminalCard">
+        <div class="card-header">
+          <span class="card-dot red"></span>
+          <span class="card-dot yellow"></span>
+          <span class="card-dot green"></span>
+          <span class="card-title">ARPANET Terminal &mdash; Try it</span>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+          <div class="terminal-line"><span class="prompt">arpanet@ucla:~$</span> <span class="typed" id="terminalTyped"></span><span class="terminal-cursor">|</span></div>
+        </div>
+        <div class="terminal-input-area">
+          <span class="prompt">arpanet@ucla:~$</span>
+          <input type="text" id="terminalInput" class="terminal-input" placeholder="Type a command... (try: connect, status, history)" autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- Game: Packet Delivery -->
+      <div class="interactive-card game-card">
+        <h3 class="card-label">Game: Packet Delivery</h3>
+        <p class="card-desc">Guide the data packet to all 4 ARPANET nodes. Click or press SPACE to boost upward!</p>
+        <canvas id="packetCanvas" width="700" height="200"></canvas>
+        <div class="game-row">
+          <span class="game-status" id="packetStatus">Click canvas to start</span>
+          <span class="game-score" id="packetScore">0 / 4 nodes</span>
+        </div>
+        <button class="game-btn" id="packetRestart" style="display:none">Play Again</button>
+      </div>
+
+      <div class="era-stats">
+        <div class="stat-item" data-count="4">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Initial Nodes</span>
+        </div>
+        <div class="stat-item" data-count="1969">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Year of First Message</span>
+        </div>
+        <div class="stat-item" data-count="2">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Letters Transmitted</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 3: WWW & DOT-COM (1990s) ==================== -->
+  <section class="section era" id="www" data-era="www" data-color="#1a0a2e">
+    <div class="era-bg-element www-windows" id="wwwWindows"></div>
+    <div class="era-sticky">
+      <div class="era-year-watermark" aria-hidden="true">1995</div>
+      <div class="era-header">
+        <span class="era-chapter">Chapter 02</span>
+        <h2 class="era-title split-text">The Wild West: Dot-Com Boom</h2>
+        <div class="era-date-range">1990s &mdash; Early 2000s</div>
+      </div>
+      <div class="era-narrative">
+        <div class="narrative-block" data-speed="0.8">
+          <p>The <strong>World Wide Web</strong> went public in <strong>1991</strong>, and the world was never the same. Suddenly, anyone with a modem could publish to the entire planet. The sound of dial-up became the anthem of a generation &mdash; <em>that glorious screech</em> of connecting to something bigger than yourself.</p>
+        </div>
+        <div class="narrative-block" data-speed="1.0">
+          <p>Then came the <strong>gold rush</strong>. Between 1995 and 2000, the NASDAQ surged 400%. Companies with no revenue and absurd names raised billions. <strong>Pets.com</strong>, <strong>Webvan</strong>, <strong>Boo.com</strong> &mdash; they burned bright and fast. Everyone wanted a piece of the digital frontier.</p>
+        </div>
+        <div class="narrative-block" data-speed="1.2">
+          <p>But amidst the chaos, giants were born. <strong>Amazon</strong> started selling books from a garage. <strong>Google</strong> was a Stanford research project. <strong>eBay</strong> proved strangers could trust each other online. When the bubble burst in <strong>2000</strong>, it wiped out $5 trillion &mdash; but the survivors would reshape civilization.</p>
+        </div>
+      </div>
+
+      <!-- Interactive: Dot-com Stock Ticker Slider -->
+      <div class="interactive-card ticker-card">
+        <h3 class="card-label">Dot-Com Time Machine</h3>
+        <p class="card-desc">Drag the slider to see the NASDAQ's wild ride</p>
+        <div class="slider-container">
+          <input type="range" min="1995" max="2003" value="1995" class="year-slider" id="nasdaqSlider" />
+          <div class="slider-labels">
+            <span>1995</span><span>1997</span><span>2000</span><span>2003</span>
+          </div>
+        </div>
+        <div class="ticker-display">
+          <div class="ticker-year" id="tickerYear">1995</div>
+          <div class="ticker-value" id="tickerValue">1,052</div>
+          <div class="ticker-event" id="tickerEvent">Netscape IPO takes the world by storm</div>
+          <div class="ticker-bar-container">
+            <div class="ticker-bar" id="tickerBar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="era-stats">
+        <div class="stat-item" data-count="413">
+          <span class="stat-number">0</span>
+          <span class="stat-label">% NASDAQ Growth (95-00)</span>
+        </div>
+        <div class="stat-item" data-count="5">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Trillion $ Lost in Crash</span>
+        </div>
+        <div class="stat-item" data-count="17">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Million Websites by 2000</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 4: SOCIAL MEDIA (2000s) ==================== -->
+  <section class="section era" id="social" data-era="social" data-color="#0a1a2e">
+    <div class="era-bg-element social-bubbles" id="socialBubbles"></div>
+    <div class="era-sticky">
+      <div class="era-year-watermark" aria-hidden="true">2004</div>
+      <div class="era-header">
+        <span class="era-chapter">Chapter 03</span>
+        <h2 class="era-title split-text">The Connected Age: Social Media</h2>
+        <div class="era-date-range">2003 &mdash; 2012</div>
+      </div>
+      <div class="era-narrative">
+        <div class="narrative-block" data-speed="0.8">
+          <p>If the dot-com era built the roads, the social era filled them with <em>people</em>. In <strong>2003</strong>, a site called <strong>Myspace</strong> let you design your own corner of the internet (usually with terrible fonts and auto-playing music). Then a Harvard student named <strong>Mark Zuckerberg</strong> launched <strong>Facebook</strong> from his dorm room in <strong>2004</strong>.</p>
+        </div>
+        <div class="narrative-block" data-speed="1.0">
+          <p><strong>YouTube</strong> arrived in 2005 &mdash; "Broadcast Yourself." <strong>Twitter</strong> followed in 2006 with a radical idea: say it in 140 characters. The internet was no longer something you <em>visited</em>. It was something you <em>lived in</em>. Your identity, your relationships, your memories &mdash; all uploaded to the cloud.</p>
+        </div>
+        <div class="narrative-block" data-speed="1.2">
+          <p>By <strong>2010</strong>, Facebook had <strong>500 million users</strong>. The Arab Spring showed social media could topple governments. But darker questions emerged: <em>Who owns your data? What happens when algorithms choose what you see? Can democracy survive the attention economy?</em></p>
+        </div>
+      </div>
+
+      <!-- Interactive: Social Network Growth Cards -->
+      <div class="interactive-card social-cards-container">
+        <h3 class="card-label">The Platforms That Changed Everything</h3>
+        <p class="card-desc">Hover to explore each platform's impact</p>
+        <div class="social-cards" id="socialCards">
+          <div class="social-card" data-platform="myspace">
+            <div class="social-card-front">
+              <div class="social-card-icon">&#9834;</div>
+              <h4>Myspace</h4>
+              <span>2003</span>
+            </div>
+            <div class="social-card-back">
+              <p>The first true social network. Gave everyone a customizable homepage. Launched indie bands into stardom. Peak: 115M users.</p>
+            </div>
+          </div>
+          <div class="social-card" data-platform="facebook">
+            <div class="social-card-front">
+              <div class="social-card-icon">f</div>
+              <h4>Facebook</h4>
+              <span>2004</span>
+            </div>
+            <div class="social-card-back">
+              <p>From dorm room to 3 billion users. Redefined friendship, advertising, and privacy. The most influential platform ever built.</p>
+            </div>
+          </div>
+          <div class="social-card" data-platform="youtube">
+            <div class="social-card-front">
+              <div class="social-card-icon">&#9654;</div>
+              <h4>YouTube</h4>
+              <span>2005</span>
+            </div>
+            <div class="social-card-back">
+              <p>Democratized video. Created a new class of celebrity. 500+ hours uploaded every minute. Acquired by Google for $1.65B.</p>
+            </div>
+          </div>
+          <div class="social-card" data-platform="twitter">
+            <div class="social-card-front">
+              <div class="social-card-icon">&#9993;</div>
+              <h4>Twitter</h4>
+              <span>2006</span>
+            </div>
+            <div class="social-card-back">
+              <p>140 characters that shook the world. Real-time news, political movements, and the digital town square. Renamed X in 2023.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="era-stats">
+        <div class="stat-item" data-count="500">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Million FB Users by 2010</span>
+        </div>
+        <div class="stat-item" data-count="72">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Hours Video Uploaded/Min (2011)</span>
+        </div>
+        <div class="stat-item" data-count="200">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Million Tweets/Day (2011)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 5: MOBILE INTERNET (2010s) ==================== -->
+  <section class="section era" id="mobile" data-era="mobile" data-color="#1a0a1e">
+    <div class="era-bg-element mobile-apps" id="mobileApps"></div>
+    <div class="era-sticky">
+      <div class="era-year-watermark" aria-hidden="true">2012</div>
+      <div class="era-header">
+        <span class="era-chapter">Chapter 04</span>
+        <h2 class="era-title split-text">Internet in Your Pocket: Mobile</h2>
+        <div class="era-date-range">2007 &mdash; 2020</div>
+      </div>
+      <div class="era-narrative">
+        <div class="narrative-block" data-speed="0.8">
+          <p>On January 9, <strong>2007</strong>, Steve Jobs walked onto a stage and said: <em>"Today, Apple is going to reinvent the phone."</em> He wasn't exaggerating. The <strong>iPhone</strong> didn't just change phones &mdash; it put the entire internet in your pocket. Within a year, the <strong>App Store</strong> launched, and a new economy was born.</p>
+        </div>
+        <div class="narrative-block" data-speed="1.0">
+          <p><strong>Instagram</strong> (2010), <strong>Snapchat</strong> (2011), <strong>Uber</strong> (2009), <strong>WhatsApp</strong> (2009) &mdash; apps that couldn't exist without mobile. By <strong>2016</strong>, mobile internet traffic surpassed desktop for the first time. The internet was no longer tied to a desk. It was <em>everywhere</em>.</p>
+        </div>
+        <div class="narrative-block" data-speed="1.2">
+          <p>Streaming killed the DVD. <strong>Netflix</strong>, <strong>Spotify</strong>, and podcasts turned every commute into entertainment. The <strong>gig economy</strong> redefined work. <strong>Cloud computing</strong> made trillion-dollar companies possible from a laptop. But with great connectivity came great surveillance &mdash; and the world began to ask: <em>at what cost?</em></p>
+        </div>
+      </div>
+
+      <!-- Interactive: App Icon Grid with Hover -->
+      <div class="interactive-card apps-card">
+        <h3 class="card-label">The App Revolution</h3>
+        <p class="card-desc">Click any app to see its story</p>
+        <div class="app-grid" id="appGrid">
+          <button class="app-icon" data-app="iphone" data-info="2007 — Steve Jobs unveils the iPhone. 150M+ units sold in first gen lifecycle.">
+            <div class="app-icon-inner" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+              <svg viewBox="0 0 40 40" width="30"><rect x="12" y="4" width="16" height="32" rx="3" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="20" cy="32" r="2" fill="#fff"/></svg>
+            </div>
+            <span>iPhone</span>
+          </button>
+          <button class="app-icon" data-app="instagram" data-info="2010 — Photo sharing app. Reached 1M users in 2 months. Acquired by FB for $1B.">
+            <div class="app-icon-inner" style="background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);">IG</div>
+            <span>Instagram</span>
+          </button>
+          <button class="app-icon" data-app="uber" data-info="2009 — Ride-hailing disrupted taxis worldwide. Pioneered the gig economy model.">
+            <div class="app-icon-inner" style="background: #000;">U</div>
+            <span>Uber</span>
+          </button>
+          <button class="app-icon" data-app="netflix" data-info="2007 — Streaming pivot. 230M+ subscribers. Spent $17B on content in 2022.">
+            <div class="app-icon-inner" style="background: #e50914;">N</div>
+            <span>Netflix</span>
+          </button>
+          <button class="app-icon" data-app="spotify" data-info="2008 — Music streaming. 600M+ users. Changed how artists distribute music forever.">
+            <div class="app-icon-inner" style="background: #1DB954;">&#9835;</div>
+            <span>Spotify</span>
+          </button>
+          <button class="app-icon" data-app="whatsapp" data-info="2009 — Encrypted messaging for the world. 2B+ users. Acquired by FB for $19B.">
+            <div class="app-icon-inner" style="background: #25D366;">W</div>
+            <span>WhatsApp</span>
+          </button>
+        </div>
+        <div class="app-info-panel" id="appInfoPanel">
+          <p>Click an app above to learn more</p>
+        </div>
+      </div>
+
+      <!-- Game: Snake -->
+      <div class="interactive-card game-card">
+        <h3 class="card-label">Game: Snake</h3>
+        <p class="card-desc">The classic mobile game! Use arrow keys or swipe to play.</p>
+        <div style="display:flex;justify-content:center">
+          <div class="phone-shell">
+            <canvas id="snakeCanvas" width="240" height="360"></canvas>
+            <div class="phone-bar"></div>
+          </div>
+        </div>
+        <div class="game-row">
+          <span class="game-status" id="snakeStatus">Press an arrow key to start</span>
+          <span class="game-score" id="snakeScore">Score: 0</span>
+        </div>
+      </div>
+
+      <div class="era-stats">
+        <div class="stat-item" data-count="6">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Billion Smartphone Users</span>
+        </div>
+        <div class="stat-item" data-count="218">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Billion App Downloads (2020)</span>
+        </div>
+        <div class="stat-item" data-count="60">
+          <span class="stat-number">0</span>
+          <span class="stat-label">% Global Traffic is Mobile</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 6: WEB3 & FUTURE ==================== -->
+  <section class="section era" id="web3" data-era="web3" data-color="#0a0a1a">
+    <div class="era-bg-element web3-grid" id="web3Grid"></div>
+    <div class="era-sticky">
+      <div class="era-year-watermark" aria-hidden="true">2030</div>
+      <div class="era-header">
+        <span class="era-chapter">Chapter 05</span>
+        <h2 class="era-title split-text">The Next Frontier: Web3 & AI</h2>
+        <div class="era-date-range">2020 &mdash; Beyond</div>
+      </div>
+      <div class="era-narrative">
+        <div class="narrative-block" data-speed="0.8">
+          <p>We stand at the edge of another revolution. <strong>Web3</strong> promises to return ownership to the people &mdash; a decentralized internet where you control your data, your identity, your digital assets. <strong>Blockchain</strong> isn't just cryptocurrency; it's a new architecture of trust.</p>
+        </div>
+        <div class="narrative-block" data-speed="1.0">
+          <p><strong>Artificial Intelligence</strong> has exploded. Models like <strong>GPT</strong> and generative AI can write, code, paint, and reason. The line between human and machine creativity is blurring. <strong>AR</strong> and <strong>VR</strong> are building the <strong>metaverse</strong> &mdash; persistent digital worlds layered on top of reality.</p>
+        </div>
+        <div class="narrative-block" data-speed="1.2">
+          <p>But the biggest question isn't technical &mdash; it's <em>human</em>. Will we build an internet that serves everyone, or one that deepens divides? Will AI augment us or replace us? The next chapter of the internet isn't written in code. <strong>It's written by the choices we make today.</strong></p>
+        </div>
+      </div>
+
+      <!-- Interactive: Web Evolution Toggle -->
+      <div class="interactive-card evolution-card">
+        <h3 class="card-label">The Three Webs</h3>
+        <p class="card-desc">Click each era to compare</p>
+        <div class="web-toggle" id="webToggle">
+          <button class="web-tab active" data-web="web1">Web 1.0</button>
+          <button class="web-tab" data-web="web2">Web 2.0</button>
+          <button class="web-tab" data-web="web3">Web 3.0</button>
+        </div>
+        <div class="web-details" id="webDetails">
+          <div class="web-detail active" id="web1">
+            <h4>Web 1.0 &mdash; Read Only</h4>
+            <p><strong>Era:</strong> 1991&ndash;2004</p>
+            <p><strong>Key idea:</strong> Static pages. You consume content.</p>
+            <p><strong>Who owns it:</strong> Webmasters & corporations</p>
+            <p><strong>Analogy:</strong> A library &mdash; you can read, but not write.</p>
+          </div>
+          <div class="web-detail" id="web2">
+            <h4>Web 2.0 &mdash; Read + Write</h4>
+            <p><strong>Era:</strong> 2004&ndash;2020</p>
+            <p><strong>Key idea:</strong> User-generated content. Social platforms.</p>
+            <p><strong>Who owns it:</strong> Big Tech (Google, Meta, Amazon)</p>
+            <p><strong>Analogy:</strong> A mall &mdash; you can create, but they own the building.</p>
+          </div>
+          <div class="web-detail" id="web3Detail">
+            <h4>Web 3.0 &mdash; Read + Write + Own</h4>
+            <p><strong>Era:</strong> 2020&ndash;Future</p>
+            <p><strong>Key idea:</strong> Decentralized. You own your data & assets.</p>
+            <p><strong>Who owns it:</strong> The users (via blockchain & tokens)</p>
+            <p><strong>Analogy:</strong> A co-op &mdash; you build it, you own it.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive: Human Hash Chain -->
+      <div class="interactive-card game-card hash-chain-card">
+        <h3 class="card-label">Interactive: The Human Hash Chain</h3>
+        <p class="card-desc">Type data into each block to generate a visual hash. Then try <strong>tampering</strong> with Block 1 — watch the chain break.</p>
+        <div class="hash-chain" id="hashChain">
+          <div class="hash-block" data-index="0">
+            <div class="hash-block-header">
+              <span class="hash-block-num">Block #1</span>
+              <span class="hash-block-status" id="hashStatus0">✓ Valid</span>
+            </div>
+            <input type="text" class="hash-input" id="hashInput0" placeholder="Type anything..." maxlength="30" autocomplete="off" />
+            <div class="hash-visual" id="hashVisual0"></div>
+            <div class="hash-string" id="hashString0">0x000000</div>
+          </div>
+          <div class="hash-link" id="hashLink0">
+            <svg width="40" height="20"><line x1="0" y1="10" x2="40" y2="10" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="4,3"/></svg>
+          </div>
+          <div class="hash-block" data-index="1">
+            <div class="hash-block-header">
+              <span class="hash-block-num">Block #2</span>
+              <span class="hash-block-status" id="hashStatus1">✓ Valid</span>
+            </div>
+            <input type="text" class="hash-input" id="hashInput1" placeholder="Type anything..." maxlength="30" autocomplete="off" />
+            <div class="hash-visual" id="hashVisual1"></div>
+            <div class="hash-string" id="hashString1">0x000000</div>
+          </div>
+          <div class="hash-link" id="hashLink1">
+            <svg width="40" height="20"><line x1="0" y1="10" x2="40" y2="10" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="4,3"/></svg>
+          </div>
+          <div class="hash-block" data-index="2">
+            <div class="hash-block-header">
+              <span class="hash-block-num">Block #3</span>
+              <span class="hash-block-status" id="hashStatus2">✓ Valid</span>
+            </div>
+            <input type="text" class="hash-input" id="hashInput2" placeholder="Type anything..." maxlength="30" autocomplete="off" />
+            <div class="hash-visual" id="hashVisual2"></div>
+            <div class="hash-string" id="hashString2">0x000000</div>
+          </div>
+        </div>
+        <div class="hash-hint" id="hashHint">Type data into each block, then mine the chain to lock it in.</div>
+        <button class="game-btn hash-mine-btn" id="hashMineBtn" style="display:none">⛏ Mine Chain</button>
+        <button class="game-btn hash-mine-btn" id="hashResetBtn" style="display:none">Reset Chain</button>
+      </div>
+
+      <div class="era-stats">
+        <div class="stat-item" data-count="5">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Billion Internet Users</span>
+        </div>
+        <div class="stat-item" data-count="175">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Zettabytes of Data (2025)</span>
+        </div>
+        <div class="stat-item" data-count="100">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Billion IoT Devices</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 7: CONCLUSION ==================== -->
+  <section class="section conclusion" id="conclusion">
+    <div class="particles" id="conclusionParticles"></div>
+    <div class="conclusion-content">
+      <span class="conclusion-eyebrow">The Story Continues</span>
+      <h2 class="conclusion-title">
+        <span class="conclusion-line">From two letters on a wire</span>
+        <span class="conclusion-line">to a world connected.</span>
+      </h2>
+      <p class="conclusion-text">In just 60 years, the internet has gone from a military experiment to the nervous system of civilization. It has toppled governments, created billionaires, connected lovers, sparked revolutions, and redefined what it means to be human in the digital age.</p>
+      <p class="conclusion-text">The next chapter? <strong>That's up to us.</strong></p>
+      <div class="conclusion-cta">
+        <button class="restart-btn" id="restartBtn">
+          <span>Restart the Journey</span>
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="conclusion-timeline-mini">
+        <span>1969</span>
+        <div class="timeline-line-mini"><div class="timeline-fill-mini"></div></div>
+        <span>Today</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
