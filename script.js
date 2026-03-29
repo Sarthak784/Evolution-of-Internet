@@ -606,3 +606,714 @@ function createSocialBubbles() {
 }
 
 createSocialBubbles();
+
+// ——————————————————————————————————————————————
+// 16. GAME: PACKET DELIVERY
+// ——————————————————————————————————————————————
+(function initPacketGame() {
+  const cv = document.getElementById("packetCanvas");
+  if (!cv) return;
+  const ctx = cv.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const st = document.getElementById("packetStatus");
+  const sc = document.getElementById("packetScore");
+  const rb = document.getElementById("packetRestart");
+  const W = 700, H = 200;
+  cv.width = W * dpr; cv.height = H * dpr;
+  cv.style.width = W + "px"; cv.style.height = H + "px";
+  ctx.scale(dpr, dpr);
+  const nodeNames = ["UCLA", "SRI", "UCSB", "UTAH"];
+  let px, py, vy, nodes, delivered, running, dead, scrollX, speed;
+
+  function reset() {
+    px = 40; py = H / 2; vy = 0; scrollX = 0; speed = 1.5; delivered = 0; running = false; dead = false;
+    nodes = [
+      { x: 200, y: 50 + Math.random() * 100, name: nodeNames[0], got: false },
+      { x: 420, y: 40 + Math.random() * 120, name: nodeNames[1], got: false },
+      { x: 640, y: 50 + Math.random() * 100, name: nodeNames[2], got: false },
+      { x: 860, y: 40 + Math.random() * 120, name: nodeNames[3], got: false },
+    ];
+    rb.style.display = "none";
+    st.textContent = "Click canvas or SPACE to boost upward!";
+    sc.textContent = "0 / 4 nodes";
+    drawStatic();
+  }
+
+  function drawStatic() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(0,255,136,.05)";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#00ff88";
+    ctx.font = "bold 14px 'Space Mono'";
+    ctx.textAlign = "center";
+    ctx.fillText("[ Click to Start Delivery ]", W / 2, H / 2 + 5);
+  }
+
+  function boost() { if (running && !dead) vy = -3; }
+
+  function tick() {
+    if (!running || dead) return;
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = "rgba(0,255,136,.04)";
+    ctx.lineWidth = 0.5;
+    for (let x = (-scrollX % 40); x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    scrollX += speed;
+    vy += 0.12; py += vy;
+    if (py < 12) py = 12;
+    if (py > H - 12) { py = H - 12; vy = 0; }
+
+    // Connection lines
+    ctx.strokeStyle = "rgba(0,255,136,.08)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const a = nodes[i], b = nodes[i + 1];
+      ctx.beginPath(); ctx.moveTo(a.x - scrollX, a.y); ctx.lineTo(b.x - scrollX, b.y); ctx.stroke();
+    }
+
+    // Nodes
+    nodes.forEach((n) => {
+      const nx = n.x - scrollX;
+      if (nx < -50 || nx > W + 50) return;
+
+      ctx.beginPath(); ctx.arc(nx, n.y, 18, 0, Math.PI * 2);
+      if (n.got) {
+        ctx.fillStyle = "rgba(0,255,136,.25)"; ctx.fill();
+        ctx.strokeStyle = "#00ff88"; ctx.lineWidth = 2; ctx.stroke();
+      } else {
+        ctx.fillStyle = "rgba(0,255,136,.08)"; ctx.fill();
+        ctx.strokeStyle = "rgba(0,255,136,.4)"; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.beginPath(); ctx.arc(nx, n.y, 22 + Math.sin(Date.now() / 300) * 4, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0,255,136,.15)"; ctx.lineWidth = 1; ctx.stroke();
+      }
+
+      ctx.fillStyle = n.got ? "#00ff88" : "rgba(0,255,136,.6)";
+      ctx.font = "bold 10px 'Space Mono'";
+      ctx.textAlign = "center";
+      ctx.fillText(n.name, nx, n.y + 4);
+      if (n.got) ctx.fillText("✓", nx, n.y - 24);
+
+      if (!n.got && Math.hypot(px - nx, py - n.y) < 26) {
+        n.got = true; delivered++;
+        sc.textContent = delivered + " / 4 nodes";
+        speed += 0.3;
+      }
+    });
+
+    // Packet trail
+    ctx.strokeStyle = "rgba(0,255,136,.2)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(px - 20, py); ctx.lineTo(px, py); ctx.stroke();
+
+    // Packet envelope
+    ctx.shadowBlur = 15; ctx.shadowColor = "#00ff88";
+    ctx.fillStyle = "#00ff88";
+    ctx.beginPath();
+    ctx.moveTo(px - 8, py - 5); ctx.lineTo(px + 8, py - 5); ctx.lineTo(px + 8, py + 5); ctx.lineTo(px - 8, py + 5);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(px - 8, py - 5); ctx.lineTo(px, py + 1); ctx.lineTo(px + 8, py - 5);
+    ctx.strokeStyle = "#020a02"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // HUD
+    ctx.fillStyle = "#00ff88"; ctx.font = "bold 12px 'Space Mono'"; ctx.textAlign = "left";
+    ctx.fillText("DELIVERING: " + delivered + "/4", 10, 20);
+    const pct = delivered / 4;
+    ctx.fillStyle = "rgba(0,255,136,.1)"; ctx.fillRect(W - 160, 8, 140, 8);
+    ctx.fillStyle = "#00ff88"; ctx.fillRect(W - 160, 8, 140 * pct, 8);
+
+    if (delivered >= 4) {
+      running = false;
+      rb.style.display = "inline-block";
+      celebratePacket();
+      return;
+    }
+
+    const lastNode = nodes.filter((n) => !n.got).pop();
+    if (lastNode && px > lastNode.x - scrollX + 60 && delivered < 4) {
+      dead = true;
+      rb.style.display = "inline-block";
+      showPacketFact(false);
+      return;
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  const packetFacts = {
+    win: [
+      "On Oct 29, 1969, the first ARPANET message was \"LO\" — it was supposed to be \"LOGIN\" but the system crashed after two letters.",
+      "ARPANET's 4 original nodes were UCLA, SRI, UCSB, and University of Utah. You just delivered to all of them!",
+      "Packet switching — splitting data into small chunks — was considered radical. The phone companies called it impossible.",
+    ],
+    lose: [
+      "Early ARPANET lost ~1 in 10 packets. The network was designed to survive nuclear attack, not to be reliable!",
+      "When packets are lost on the real internet, TCP automatically re-sends them. Your browser does this hundreds of times per page.",
+      "Packet loss still happens today! When your video call freezes, that's packets failing to arrive in time.",
+    ],
+  };
+
+  function showPacketFact(won) {
+    const pool = won ? packetFacts.win : packetFacts.lose;
+    const fact = pool[Math.floor(Math.random() * pool.length)];
+    st.innerHTML = (won ? "<strong>ARPANET online!</strong> " : "<strong>Packet lost!</strong> ") + fact;
+  }
+
+  function celebratePacket() {
+    let particles = [];
+    for (let i = 0; i < 60; i++) {
+      particles.push({ x: W / 2, y: H / 2, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 6, r: 2 + Math.random() * 3, life: 1 });
+    }
+    let frame = 0;
+    const msgs = ["NETWORK ONLINE", "UCLA → SRI → UCSB → UTAH", "THE INTERNET IS BORN"];
+
+    function celebFrame() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.strokeStyle = "rgba(0,255,136,.04)"; ctx.lineWidth = 0.5;
+      for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+      particles.forEach((p) => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.life -= 0.012;
+        if (p.life <= 0) return;
+        ctx.globalAlpha = p.life;
+        ctx.shadowBlur = 8; ctx.shadowColor = "#00ff88";
+        ctx.fillStyle = "#00ff88"; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+      ctx.globalAlpha = 1;
+
+      const nodePos = [{ x: 100, y: 40 }, { x: 270, y: 40 }, { x: 430, y: 40 }, { x: 600, y: 40 }];
+      ctx.strokeStyle = "rgba(0,255,136,.5)"; ctx.lineWidth = 1.5;
+      const lp = Math.min(frame / 30, 1);
+      for (let i = 0; i < 3; i++) {
+        const a = nodePos[i], b = nodePos[i + 1];
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(a.x + (b.x - a.x) * lp, a.y + (b.y - a.y) * lp); ctx.stroke();
+      }
+      nodePos.forEach((n, i) => {
+        ctx.beginPath(); ctx.arc(n.x, n.y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,255,136,.3)"; ctx.fill();
+        ctx.strokeStyle = "#00ff88"; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = "#00ff88"; ctx.font = "bold 9px 'Space Mono'"; ctx.textAlign = "center";
+        ctx.fillText(nodeNames[i], n.x, n.y + 3);
+      });
+
+      const msgIdx = Math.min(Math.floor(frame / 40), msgs.length - 1);
+      const charCount = Math.min(frame - msgIdx * 40, msgs[msgIdx].length);
+      const displayMsg = msgs[msgIdx].substring(0, charCount);
+      ctx.fillStyle = "#00ff88"; ctx.textAlign = "center";
+      ctx.font = "bold 18px 'Space Mono'";
+      ctx.shadowBlur = 15; ctx.shadowColor = "#00ff88";
+      ctx.fillText(displayMsg, W / 2, H / 2 + 30);
+      ctx.shadowBlur = 0;
+
+      if (frame > 80) {
+        ctx.font = "bold 12px 'Space Mono'"; ctx.fillStyle = "rgba(0,255,136,.4)";
+        ctx.fillText("— October 29, 1969 —", W / 2, H - 15);
+      }
+
+      frame++;
+      if (frame < 180) requestAnimationFrame(celebFrame);
+      else showPacketFact(true);
+    }
+    celebFrame();
+  }
+
+  cv.addEventListener("click", () => {
+    if (!running && !dead) { running = true; st.textContent = "Click or SPACE to boost!"; tick(); }
+    else boost();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.code === "Space") {
+      const r = cv.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        e.preventDefault();
+        if (!running && !dead) { running = true; st.textContent = "Click or SPACE to boost!"; tick(); }
+        else boost();
+      }
+    }
+  });
+
+  rb.addEventListener("click", reset);
+  reset();
+})();
+
+// ——————————————————————————————————————————————
+// 17. GAME: SNAKE
+// ——————————————————————————————————————————————
+(function initSnakeGame() {
+  const cv = document.getElementById("snakeCanvas");
+  if (!cv) return;
+  const ctx = cv.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const st = document.getElementById("snakeStatus");
+  const sc = document.getElementById("snakeScore");
+  const W = 240, H = 360, G = 12, cols = W / G, rows = H / G;
+  cv.width = W * dpr; cv.height = H * dpr;
+  cv.style.width = W + "px"; cv.style.height = H + "px";
+  ctx.scale(dpr, dpr);
+  let snake, dir, food, score, running, interval, touchStart;
+
+  const snakeFacts = [
+    "Nokia's Snake (1998) was pre-installed on 400 million+ phones — the first game most people ever played on mobile.",
+    "The App Store launched in 2008 with 500 apps. Today it has over 2 million. Mobile changed everything.",
+    "In 2016 mobile internet usage overtook desktop for the first time. We now carry supercomputers in our pockets.",
+    "The first smartphone was IBM's Simon (1994). It had a touchscreen, email, and apps — 13 years before the iPhone.",
+    "Mobile games generate more revenue than PC and console gaming combined. Snake started it all.",
+  ];
+
+  function reset() {
+    snake = [{ x: 10, y: 15 }]; dir = { x: 1, y: 0 }; score = 0; running = false; food = newFood();
+    sc.textContent = "Score: 0"; st.textContent = "Press arrow key to start";
+    clearInterval(interval); draw();
+  }
+
+  function newFood() {
+    let f;
+    do { f = { x: Math.floor(Math.random() * cols), y: Math.floor(Math.random() * rows) }; }
+    while (snake.some((s) => s.x === f.x && s.y === f.y));
+    return f;
+  }
+
+  function draw() {
+    ctx.fillStyle = "#0a0a1a"; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "rgba(255,255,255,.03)";
+    for (let x = 0; x < W; x += G) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += G) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    ctx.fillStyle = "#ff5f56"; ctx.shadowBlur = 8; ctx.shadowColor = "#ff5f56";
+    ctx.fillRect(food.x * G + 1, food.y * G + 1, G - 2, G - 2); ctx.shadowBlur = 0;
+    snake.forEach((s, i) => {
+      ctx.fillStyle = i === 0 ? "#00ff88" : "rgba(0,255,136,.6)";
+      ctx.fillRect(s.x * G + 1, s.y * G + 1, G - 2, G - 2);
+    });
+    ctx.fillStyle = "#fff"; ctx.font = "bold 10px 'Space Mono'"; ctx.textAlign = "left";
+    ctx.fillText("Score: " + score, 4, 12);
+  }
+
+  function step() {
+    const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows || snake.some((s) => s.x === head.x && s.y === head.y)) {
+      running = false; clearInterval(interval);
+      const fact = snakeFacts[Math.floor(Math.random() * snakeFacts.length)];
+      st.innerHTML = "<strong>Game over! Score: " + score + ".</strong> " + fact + " <em>Press arrow to restart.</em>";
+      return;
+    }
+    snake.unshift(head);
+    if (head.x === food.x && head.y === food.y) { score++; sc.textContent = "Score: " + score; food = newFood(); }
+    else snake.pop();
+    draw();
+  }
+
+  function setDir(dx, dy) { if (dir.x !== -dx || dir.y !== -dy) dir = { x: dx, y: dy }; }
+
+  document.addEventListener("keydown", (e) => {
+    if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) return;
+    const r = cv.getBoundingClientRect();
+    if (r.top > window.innerHeight || r.bottom < 0) return;
+    e.preventDefault();
+    if (!running) { reset(); running = true; interval = setInterval(step, 100); st.textContent = "Playing..."; }
+    if (e.key === "ArrowUp") setDir(0, -1);
+    if (e.key === "ArrowDown") setDir(0, 1);
+    if (e.key === "ArrowLeft") setDir(-1, 0);
+    if (e.key === "ArrowRight") setDir(1, 0);
+  });
+
+  cv.addEventListener("touchstart", (e) => {
+    touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    if (!running) { reset(); running = true; interval = setInterval(step, 100); st.textContent = "Playing..."; }
+  }, { passive: true });
+
+  cv.addEventListener("touchend", (e) => {
+    if (!touchStart) return;
+    const dx = e.changedTouches[0].clientX - touchStart.x;
+    const dy = e.changedTouches[0].clientY - touchStart.y;
+    if (Math.abs(dx) > Math.abs(dy)) { if (dx > 0) setDir(1, 0); else setDir(-1, 0); }
+    else { if (dy > 0) setDir(0, 1); else setDir(0, -1); }
+  }, { passive: true });
+
+  reset();
+})();
+
+// ——————————————————————————————————————————————
+// 18. INTERACTIVE: HUMAN HASH CHAIN
+// ——————————————————————————————————————————————
+(function initHashChain() {
+  const inputs = [document.getElementById("hashInput0"), document.getElementById("hashInput1"), document.getElementById("hashInput2")];
+  const visuals = [document.getElementById("hashVisual0"), document.getElementById("hashVisual1"), document.getElementById("hashVisual2")];
+  const strings = [document.getElementById("hashString0"), document.getElementById("hashString1"), document.getElementById("hashString2")];
+  const statuses = [document.getElementById("hashStatus0"), document.getElementById("hashStatus1"), document.getElementById("hashStatus2")];
+  const links = [document.getElementById("hashLink0"), document.getElementById("hashLink1")];
+  const blocks = document.querySelectorAll(".hash-block");
+  const hint = document.getElementById("hashHint");
+  const mineBtn = document.getElementById("hashMineBtn");
+  const resetBtn = document.getElementById("hashResetBtn");
+
+  if (!inputs[0]) return;
+
+  const originalValues = ["", "", ""];
+  let mined = false; // chain has been mined/locked
+
+  const shapeColors = [
+    "#7b61ff", "#00ff88", "#ff6b6b", "#4ecdc4", "#ffe66d", "#a855f7",
+    "#06b6d4", "#f97316", "#ec4899", "#84cc16", "#6366f1", "#14b8a6"
+  ];
+  const shapes = ["circle", "square", "diamond", "triangle"];
+
+  const hashFacts = [
+    "This is how Bitcoin works — each block stores the previous block's fingerprint. Change one old transaction, and every block after it turns invalid.",
+    "Blockchains are like a notebook written in permanent ink. You can add new pages, but you can never erase what's already written without everyone noticing.",
+    "In 2016, hackers stole $60M from Ethereum. But no one could 'edit' the blockchain to undo it — the community had to create an entirely new version instead.",
+  ];
+
+  function simpleHash(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+    }
+    return h;
+  }
+
+  function generateHashVisual(str, container) {
+    container.innerHTML = "";
+    if (!str) return;
+    const hash = simpleHash(str);
+    const seed = Math.abs(hash);
+
+    for (let i = 0; i < 12; i++) {
+      const val = (seed * (i + 1) * 7 + i * 31) % 1000;
+      const colorIdx = val % shapeColors.length;
+      const shapeIdx = Math.floor(val / 100) % shapes.length;
+      const el = document.createElement("div");
+      el.className = "hash-shape";
+      el.style.background = shapeColors[colorIdx];
+
+      if (shapeIdx === 0) el.style.borderRadius = "50%";
+      else if (shapeIdx === 2) { el.style.transform = "rotate(45deg)"; el.style.borderRadius = "2px"; }
+      else if (shapeIdx === 3) {
+        el.style.width = "0"; el.style.height = "0"; el.style.background = "none";
+        el.style.borderLeft = "5px solid transparent"; el.style.borderRight = "5px solid transparent";
+        el.style.borderBottom = "10px solid " + shapeColors[colorIdx];
+      }
+      container.appendChild(el);
+    }
+  }
+
+  function hashToString(str, prevHash) {
+    const combined = str + (prevHash || "genesis");
+    const h = Math.abs(simpleHash(combined));
+    return "0x" + h.toString(16).padStart(8, "0").substring(0, 8);
+  }
+
+  function updateChain() {
+    let prevHash = "genesis";
+    const currentValues = inputs.map((inp) => inp.value);
+    const allHaveText = currentValues.every((v) => v.length > 0);
+
+    // Show mine button when all filled but not yet mined
+    if (allHaveText && !mined) {
+      mineBtn.style.display = "inline-block";
+    } else if (!mined) {
+      mineBtn.style.display = "none";
+    }
+
+    // Detect tampering only after mining
+    let tampered = false;
+    let tamperIdx = -1;
+
+    if (mined) {
+      for (let i = 0; i < 3; i++) {
+        if (currentValues[i] !== originalValues[i]) {
+          tamperIdx = i;
+          tampered = true;
+          break;
+        }
+      }
+    }
+
+    for (let i = 0; i < 3; i++) {
+      const val = currentValues[i];
+      const hashStr = hashToString(val, prevHash);
+      prevHash = hashStr;
+
+      generateHashVisual(val, visuals[i]);
+      strings[i].textContent = val ? hashStr : "0x000000";
+
+      if (tampered && i >= tamperIdx) {
+        blocks[i].classList.add("invalid");
+        blocks[i].classList.remove("valid");
+        statuses[i].textContent = "✗ TAMPERED";
+
+        visuals[i].querySelectorAll(".hash-shape").forEach((s) => {
+          s.style.background = "#ff4757";
+          s.style.borderBottomColor = "#ff4757";
+        });
+
+        if (i > 0 && links[i - 1]) {
+          links[i - 1].classList.add("broken");
+        }
+      } else if (val) {
+        blocks[i].classList.add("valid");
+        blocks[i].classList.remove("invalid");
+        statuses[i].textContent = mined ? "✓ Mined" : "✓ Valid";
+        if (i > 0 && links[i - 1]) links[i - 1].classList.remove("broken");
+      } else {
+        blocks[i].classList.remove("valid", "invalid");
+        statuses[i].textContent = "✓ Valid";
+        if (i > 0 && links[i - 1]) links[i - 1].classList.remove("broken");
+      }
+    }
+
+    // Update hint
+    if (tampered) {
+      const hf = hashFacts[Math.floor(Math.random() * hashFacts.length)];
+      hint.innerHTML = "<strong>Chain broken!</strong> Changing Block #" + (tamperIdx + 1) + " invalidated all blocks after it. " + hf;
+      hint.classList.add("alert");
+      resetBtn.style.display = "inline-block";
+    } else if (mined) {
+      hint.textContent = "Chain mined and locked! Now try tampering — edit any block's data to see what happens.";
+      hint.classList.remove("alert");
+    } else if (allHaveText) {
+      hint.textContent = "All blocks filled! Click \"Mine Chain\" to lock the blockchain.";
+      hint.classList.remove("alert");
+    } else {
+      hint.textContent = "Type data into each block, then mine the chain to lock it in.";
+      hint.classList.remove("alert");
+    }
+  }
+
+  function mineChain() {
+    mined = true;
+    originalValues[0] = inputs[0].value;
+    originalValues[1] = inputs[1].value;
+    originalValues[2] = inputs[2].value;
+    mineBtn.style.display = "none";
+    updateChain();
+  }
+
+  function resetChain() {
+    mined = false;
+    inputs.forEach((inp) => { inp.value = ""; });
+    originalValues[0] = ""; originalValues[1] = ""; originalValues[2] = "";
+    mineBtn.style.display = "none";
+    resetBtn.style.display = "none";
+    blocks.forEach((b) => b.classList.remove("valid", "invalid"));
+    links.forEach((l) => { if (l) l.classList.remove("broken"); });
+    updateChain();
+  }
+
+  mineBtn.addEventListener("click", mineChain);
+  resetBtn.addEventListener("click", resetChain);
+  inputs.forEach((inp) => inp.addEventListener("input", updateChain));
+})();
+
+// ——————————————————————————————————————————————
+// 19. GAME: TRAIN THE NEURAL NETWORK
+// ——————————————————————————————————————————————
+(function initNNGame() {
+  const cv = document.getElementById("nnCanvas");
+  if (!cv) return;
+  const ctx = cv.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const W = cv.width, H = cv.height;
+  cv.width = W * dpr;
+  cv.height = H * dpr;
+  cv.style.width = W + "px";
+  cv.style.height = H + "px";
+  ctx.scale(dpr, dpr);
+
+  const w1Slider = document.getElementById("nnW1");
+  const w2Slider = document.getElementById("nnW2");
+  const w3Slider = document.getElementById("nnW3");
+  const bSlider = document.getElementById("nnB");
+  const w1Val = document.getElementById("nnW1Val");
+  const w2Val = document.getElementById("nnW2Val");
+  const w3Val = document.getElementById("nnW3Val");
+  const bVal = document.getElementById("nnBVal");
+  const st = document.getElementById("nnStatus");
+  const sc = document.getElementById("nnScore");
+  const rb = document.getElementById("nnReset");
+
+  // Target: network should output ~0.9 (red = 1.0)
+  const targetOutput = 0.9;
+  const inputValues = [0.8, 0.3];
+  // Start weights that produce output ≈ 0.27 (far from 0.9 → high loss)
+  const initW = { w1: -0.8, w2: -0.6, w3: -0.5, b: -0.7 };
+  let updates = 0;
+  let won = false;
+  let lossHistory = [];
+
+  const nnFacts = [
+    "You just did what gradient descent does automatically — nudge weights to minimize error. Real networks do this millions of times per second.",
+    "GPT-4 has ~1.8 trillion weights. You adjusted 4. Imagine tuning 1.8 trillion sliders — that's why we need algorithms!",
+    "Backpropagation was described in 1986, but GPUs didn't make deep learning practical until 2012. The math waited 26 years for the hardware.",
+    "The 'loss' you minimized is called Mean Squared Error. Real networks use it too — along with cross-entropy, hinge loss, and dozens more.",
+  ];
+
+  function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+
+  function forward(w1, w2, w3, b) {
+    const h1 = sigmoid(inputValues[0] * w1 + b);
+    const h2 = sigmoid(inputValues[1] * w2 + b);
+    const out = sigmoid((h1 + h2) * w3 + b);
+    return { h1, h2, out };
+  }
+
+  function draw() {
+    const w1 = parseFloat(w1Slider.value);
+    const w2 = parseFloat(w2Slider.value);
+    const w3 = parseFloat(w3Slider.value);
+    const b = parseFloat(bSlider.value);
+
+    const { h1, h2, out } = forward(w1, w2, w3, b);
+    const loss = Math.pow(out - targetOutput, 2);
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Background grid
+    ctx.strokeStyle = "rgba(255,255,255,.03)"; ctx.lineWidth = 0.5;
+    for (let x = 0; x < W; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    // Network nodes
+    const layers = [
+      [{ x: 100, y: 100, v: inputValues[0], label: "x1=0.8" }, { x: 100, y: 220, v: inputValues[1], label: "x2=0.3" }],
+      [{ x: 300, y: 100, v: h1, label: "h1=" + h1.toFixed(2) }, { x: 300, y: 220, v: h2, label: "h2=" + h2.toFixed(2) }],
+      [{ x: 500, y: 160, v: out, label: "y=" + out.toFixed(3) }],
+    ];
+
+    // Connections
+    const conns = [
+      { from: layers[0][0], to: layers[1][0], w: w1, label: "W1" },
+      { from: layers[0][1], to: layers[1][1], w: w2, label: "W2" },
+      { from: layers[1][0], to: layers[2][0], w: w3, label: "W3" },
+      { from: layers[1][1], to: layers[2][0], w: w3, label: "W3" },
+    ];
+
+    conns.forEach((c) => {
+      const thickness = Math.abs(c.w) * 3 + 0.5;
+      const alpha = Math.min(Math.abs(c.w) / 2 + 0.15, 1);
+      ctx.strokeStyle = c.w >= 0 ? "rgba(0,255,136," + alpha + ")" : "rgba(255,107,107," + alpha + ")";
+      ctx.lineWidth = thickness;
+      ctx.beginPath(); ctx.moveTo(c.from.x, c.from.y); ctx.lineTo(c.to.x, c.to.y); ctx.stroke();
+
+      const mx = (c.from.x + c.to.x) / 2;
+      const my = (c.from.y + c.to.y) / 2 - 8;
+      ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.font = "10px 'Space Mono'"; ctx.textAlign = "center";
+      ctx.fillText(c.label + "=" + c.w.toFixed(2), mx, my);
+    });
+
+    // Neurons
+    layers.forEach((layer) => {
+      layer.forEach((n) => {
+        const a = n.v;
+        const green = Math.floor(a * 255);
+        const red = Math.floor((1 - a) * 100);
+        ctx.beginPath(); ctx.arc(n.x, n.y, 22, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(" + red + "," + green + ",100," + (0.3 + a * 0.5) + ")";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.5; ctx.stroke();
+
+        ctx.shadowBlur = 12; ctx.shadowColor = "rgba(0,255,136," + (a * 0.6) + ")";
+        ctx.beginPath(); ctx.arc(n.x, n.y, 22, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = "#fff"; ctx.font = "bold 10px 'Space Mono'"; ctx.textAlign = "center";
+        ctx.fillText(n.label, n.x, n.y + 4);
+      });
+    });
+
+    // Target
+    ctx.fillStyle = "#ff6b6b"; ctx.font = "bold 11px 'Space Mono'"; ctx.textAlign = "left";
+    ctx.fillText("Target: 0.9", 560, 120);
+    ctx.beginPath(); ctx.arc(620, 160, 10, 0, Math.PI * 2);
+    ctx.fillStyle = "#ff6b6b"; ctx.shadowBlur = 10; ctx.shadowColor = "#ff6b6b"; ctx.fill(); ctx.shadowBlur = 0;
+    ctx.fillStyle = "rgba(255,255,255,.3)"; ctx.font = "9px 'Space Mono'";
+    ctx.fillText("actual", 610, 185);
+
+    // Prediction dot
+    const predColor = out > 0.5 ? "rgba(" + Math.floor(out * 255) + ",80,80,1)" : "rgba(80,80," + Math.floor((1 - out) * 255) + ",1)";
+    ctx.beginPath(); ctx.arc(540, 160, 8, 0, Math.PI * 2);
+    ctx.fillStyle = predColor; ctx.fill();
+
+    // Loss text
+    ctx.fillStyle = loss < 0.05 ? "#00ff88" : "#ff6b6b";
+    ctx.font = "bold 14px 'Space Mono'"; ctx.textAlign = "right";
+    ctx.fillText("Loss: " + loss.toFixed(4), W - 20, 30);
+
+    // Loss curve
+    lossHistory.push(loss);
+    if (lossHistory.length > 80) lossHistory.shift();
+    const gx = 20, gy = H - 70, gw = 200, gh = 50;
+    ctx.fillStyle = "rgba(255,255,255,.02)"; ctx.fillRect(gx, gy, gw, gh);
+    ctx.strokeStyle = "rgba(255,255,255,.1)"; ctx.lineWidth = 0.5; ctx.strokeRect(gx, gy, gw, gh);
+    ctx.fillStyle = "rgba(255,255,255,.25)"; ctx.font = "8px 'Space Mono'"; ctx.textAlign = "left";
+    ctx.fillText("Loss over time", gx + 4, gy - 4);
+
+    // Threshold line
+    ctx.strokeStyle = "rgba(0,255,136,.3)"; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+    const ty = gy + gh - (0.05 / 1.0) * gh;
+    ctx.beginPath(); ctx.moveTo(gx, ty); ctx.lineTo(gx + gw, ty); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(0,255,136,.4)"; ctx.fillText("0.05", gx + gw + 4, ty + 3);
+
+    if (lossHistory.length > 1) {
+      ctx.strokeStyle = loss < 0.05 ? "#00ff88" : "#7b61ff"; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      lossHistory.forEach((l, i) => {
+        const lx = gx + (i / 79) * gw;
+        const ly = gy + gh - Math.min(l / 1.0, 1) * gh;
+        if (i === 0) ctx.moveTo(lx, ly); else ctx.lineTo(lx, ly);
+      });
+      ctx.stroke();
+    }
+
+    // Formula
+    ctx.fillStyle = "rgba(255,255,255,.15)"; ctx.font = "10px 'Space Mono'"; ctx.textAlign = "center";
+    ctx.fillText("y = sigmoid( sum(wi * xi) + b )", 350, H - 12);
+
+    return loss;
+  }
+
+  function onSliderChange() {
+    if (won) return;
+    updates++;
+    w1Val.textContent = parseFloat(w1Slider.value).toFixed(2);
+    w2Val.textContent = parseFloat(w2Slider.value).toFixed(2);
+    w3Val.textContent = parseFloat(w3Slider.value).toFixed(2);
+    bVal.textContent = parseFloat(bSlider.value).toFixed(2);
+    sc.textContent = "Updates: " + updates;
+
+    const loss = draw();
+
+    if (loss < 0.05 && !won) {
+      won = true;
+      const fact = nnFacts[Math.floor(Math.random() * nnFacts.length)];
+      st.innerHTML = "<strong>Loss < 0.05! Trained in " + updates + " updates.</strong> " + fact;
+      rb.style.display = "inline-block";
+    } else if (loss < 0.15) {
+      st.textContent = "Almost there! Fine-tune the weights...";
+    } else if (loss < 0.4) {
+      st.textContent = "Getting closer! Loss is dropping...";
+    } else {
+      st.textContent = "Drag the sliders to reduce the loss!";
+    }
+  }
+
+  function reset() {
+    won = false; updates = 0; lossHistory = [];
+    w1Slider.value = initW.w1; w2Slider.value = initW.w2; w3Slider.value = initW.w3; bSlider.value = initW.b;
+    w1Val.textContent = initW.w1.toFixed(2); w2Val.textContent = initW.w2.toFixed(2);
+    w3Val.textContent = initW.w3.toFixed(2); bVal.textContent = initW.b.toFixed(2);
+    st.textContent = "Drag the sliders to reduce the loss!";
+    sc.textContent = "Updates: 0";
+    rb.style.display = "none";
+    draw();
+  }
+
+  [w1Slider, w2Slider, w3Slider, bSlider].forEach((s) => s.addEventListener("input", onSliderChange));
+  rb.addEventListener("click", reset);
+  draw();
+})();
