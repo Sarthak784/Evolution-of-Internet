@@ -482,52 +482,7 @@
         <button class="game-btn hash-mine-btn" id="hashResetBtn" style="display:none">Reset Chain</button>
       </div>
 
-      <!-- Game: Manual Backprop Race -->
-      <div class="interactive-card game-card">
-        <h3 class="card-label">Game: Train the Neural Network</h3>
-        <p class="card-desc">This 3-layer network thinks the <strong style="color:#ff6b6b">red dot</strong> is blue. Drag the weight sliders to fix it — reach Loss &lt; 0.05 in the fewest updates!</p>
-        <canvas id="nnCanvas" width="700" height="320"></canvas>
-        <div class="nn-controls" id="nnControls">
-          <div class="nn-slider-group">
-            <label class="nn-label">W1 <span id="nnW1Val">-0.80</span></label>
-            <input type="range" class="nn-slider" id="nnW1" min="-2" max="2" step="0.05" value="-0.8" />
-          </div>
-          <div class="nn-slider-group">
-            <label class="nn-label">W2 <span id="nnW2Val">-0.60</span></label>
-            <input type="range" class="nn-slider" id="nnW2" min="-2" max="2" step="0.05" value="-0.6" />
-          </div>
-          <div class="nn-slider-group">
-            <label class="nn-label">W3 <span id="nnW3Val">-0.50</span></label>
-            <input type="range" class="nn-slider" id="nnW3" min="-2" max="2" step="0.05" value="-0.5" />
-          </div>
-          <div class="nn-slider-group">
-            <label class="nn-label">Bias <span id="nnBVal">-0.70</span></label>
-            <input type="range" class="nn-slider" id="nnB" min="-2" max="2" step="0.05" value="-0.7" />
-          </div>
-        </div>
-        <div class="game-row">
-          <span class="game-status" id="nnStatus">Drag the sliders to reduce the loss!</span>
-          <span class="game-score" id="nnScore">Updates: 0</span>
-        </div>
-        <button class="game-btn" id="nnReset" style="display:none">Play Again</button>
-      </div>
-
-      <div class="era-stats">
-        <div class="stat-item" data-count="5">
-          <span class="stat-number">0</span>
-          <span class="stat-label">Billion Internet Users</span>
-        </div>
-        <div class="stat-item" data-count="175">
-          <span class="stat-number">0</span>
-          <span class="stat-label">Zettabytes of Data (2025)</span>
-        </div>
-        <div class="stat-item" data-count="100">
-          <span class="stat-number">0</span>
-          <span class="stat-label">Billion IoT Devices</span>
-        </div>
-      </div>
-    </div>
-  </section>
+      
 
   <!-- ==================== SECTION 7: CONCLUSION ==================== -->
   <section class="section conclusion" id="conclusion">
